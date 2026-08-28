@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
 @Table(name = "inventory")
@@ -22,6 +23,7 @@ public class Inventory {
     @JoinColumn(name = "product_id", unique = true)
     private Product product;
 
+    @PositiveOrZero
     private int quantity;
 
 }

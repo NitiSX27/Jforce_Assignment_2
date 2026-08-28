@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "roles")
@@ -19,5 +20,6 @@ public class Roles {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @NotBlank
     private String name;
 }

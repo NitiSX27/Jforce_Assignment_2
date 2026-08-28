@@ -5,6 +5,7 @@ import com.Jforce.Assignment2.entity.User;
 import com.Jforce.Assignment2.repository.RolesRepository;
 import com.Jforce.Assignment2.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import com.Jforce.Assignment2.exception.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class UserService {
 
     public User addUser(User user, Long roleId) {
         Roles role = rolesRepository.findById(roleId)
-                .orElseThrow(() -> new RuntimeException("Role Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + roleId));
 
         user.setRole(role);
         return userRepository.save(user);
@@ -33,12 +34,12 @@ public class UserService {
 
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
     }
 
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + email));
     }
 
     public User updateUser(Long id, User user) {
@@ -52,7 +53,7 @@ public class UserService {
     public User updateUserRole(Long userId, Long roleId) {
         User user = getUserById(userId);
         Roles role = rolesRepository.findById(roleId)
-                .orElseThrow(() -> new RuntimeException("Role Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + roleId));
 
         user.setRole(role);
         return userRepository.save(user);

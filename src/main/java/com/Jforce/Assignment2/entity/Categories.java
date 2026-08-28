@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Getter
@@ -18,6 +19,7 @@ public class Categories {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @NotBlank
     private String name;
 
 }

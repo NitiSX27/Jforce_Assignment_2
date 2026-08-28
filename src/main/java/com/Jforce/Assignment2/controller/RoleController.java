@@ -5,6 +5,7 @@ import com.Jforce.Assignment2.service.RoleService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/roles")
@@ -17,7 +18,7 @@ public class RoleController {
     }
 
     @PostMapping
-    public Roles addRole(@RequestBody Roles role) {
+    public Roles addRole(@Valid @RequestBody Roles role) {
         return roleService.addRole(role);
     }
 

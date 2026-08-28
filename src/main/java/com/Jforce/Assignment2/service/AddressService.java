@@ -5,6 +5,7 @@ import com.Jforce.Assignment2.entity.User;
 import com.Jforce.Assignment2.repository.AddressRepository;
 import com.Jforce.Assignment2.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import com.Jforce.Assignment2.exception.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class AddressService {
 
     public Address addAddress(Long userId, Address address){
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
 
         address.setUser(user);
 
@@ -31,14 +32,14 @@ public class AddressService {
 
     public List<Address> getAddressesByUser(Long userId){
         userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
 
         return addressRepository.findByUser_Id(userId);
     }
 
     public Address getAddressById(Long id){
         return addressRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Address Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found: " + id));
     }
 
     public void deleteAddress(Long id){

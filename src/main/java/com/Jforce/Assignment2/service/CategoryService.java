@@ -3,6 +3,7 @@ package com.Jforce.Assignment2.service;
 import com.Jforce.Assignment2.entity.Categories;
 import com.Jforce.Assignment2.repository.CategoriesRepository;
 import org.springframework.stereotype.Service;
+import com.Jforce.Assignment2.exception.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -25,12 +26,12 @@ public class CategoryService {
 
     public Categories getCategoryById(Long id){
         return categoriesRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + id));
     }
 
     public Categories getCategoryByName(String name){
         return categoriesRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("Category Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + name));
     }
 
     public Categories updateCategory(Long id, Categories category) {

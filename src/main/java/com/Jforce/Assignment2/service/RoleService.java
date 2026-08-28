@@ -3,6 +3,7 @@ package com.Jforce.Assignment2.service;
 import com.Jforce.Assignment2.entity.Roles;
 import com.Jforce.Assignment2.repository.RolesRepository;
 import org.springframework.stereotype.Service;
+import com.Jforce.Assignment2.exception.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -25,12 +26,12 @@ public class RoleService {
 
     public Roles getRoleById(Long id) {
         return rolesRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Role Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + id));
     }
 
     public Roles getRoleByName(String name) {
         return rolesRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("Role Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + name));
     }
 
     public Roles updateRole(Long id, Roles role) {

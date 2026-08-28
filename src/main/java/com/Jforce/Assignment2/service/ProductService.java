@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import com.Jforce.Assignment2.exception.ResourceNotFoundException;
 
 @Service
 public class ProductService {
@@ -20,23 +21,32 @@ public class ProductService {
     }
 
     public Product addProduct(Product product) {
+        if (product.getCategory() != null && product.getCategory().getId() != null) {
+            product.setCategory(categoriesRepository.findById(product.getCategory().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found: "
+                            + product.getCategory().getId())));
+        }
         return productRepository.save(product);
     }
 
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        return productRepository.findByEnabledTrue();
     }
 
     public Product getProductById(Long id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found: " + id));
     }
 
     public List<Product> getProductsByCategory(Long categoryId) {
         categoriesRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + categoryId));
 
-        return productRepository.findByCategory_Id(categoryId);
+        return productRepository.findByCategory_IdAndEnabledTrue(categoryId);
+    }
+
+    public List<Product> getAllProductsForAdmin() {
+        return productRepository.findAll();
     }
 
     public Product updateProduct(Long id, Product product) {
@@ -50,7 +60,8 @@ public class ProductService {
         if (product.getCategory() != null) {
             existingProduct.setCategory(categoriesRepository.findById(
                             product.getCategory().getId())
-                    .orElseThrow(() -> new RuntimeException("Category not found")));
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found: "
+                            + product.getCategory().getId())));
         }
 
         return productRepository.save(existingProduct);

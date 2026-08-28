@@ -5,6 +5,7 @@ import com.Jforce.Assignment2.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
@@ -17,7 +18,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User addUser(@RequestBody User user, @RequestParam Long roleId) {
+    public User addUser(@Valid @RequestBody User user, @RequestParam Long roleId) {
         return userService.addUser(user, roleId);
     }
 

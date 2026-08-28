@@ -4,6 +4,8 @@ import com.Jforce.Assignment2.entity.*;
 import com.Jforce.Assignment2.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.Jforce.Assignment2.exception.BusinessException;
+import com.Jforce.Assignment2.exception.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -37,22 +39,22 @@ public class OrderService {
     @Transactional
     public Order placeOrder(Long userId, Long addressId){
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
 
         Address address = addressRepository.findById(addressId)
-                .orElseThrow(() -> new RuntimeException("Address Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found: " + addressId));
 
         if (!address.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("Address does not belong to user");
+            throw new BusinessException("Address does not belong to user");
         }
 
         Cart cart = cartRepository.findByUser_Id(userId)
-                .orElseThrow(() -> new RuntimeException("Cart Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user: " + userId));
 
         List<Cart_items> cartItems = cartItemsRepository.findByCart_Id(cart.getId());
 
         if (cartItems.isEmpty()) {
-            throw new RuntimeException("Cart is empty");
+            throw new BusinessException("Cart is empty");
         }
 
         double totalAmount = 0;
@@ -60,7 +62,8 @@ public class OrderService {
         for (Cart_items cartItem : cartItems) {
             if (!inventoryService.checkStock(
                     cartItem.getProduct().getId(), cartItem.getQuantity())) {
-                throw new RuntimeException("Insufficient inventory");
+                throw new BusinessException("Insufficient inventory for product: "
+                        + cartItem.getProduct().getId());
             }
 
             totalAmount += cartItem.getProduct().getPrice() * cartItem.getQuantity();
@@ -91,12 +94,12 @@ public class OrderService {
 
     public Order getOrderById(Long orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found: " + orderId));
     }
 
     public List<Order> getOrdersByUser(Long userId) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
 
         return orderRepository.findByUser_Id(userId);
     }

@@ -6,8 +6,14 @@ import com.Jforce.Assignment2.service.CartService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import jakarta.validation.Valid;
+import com.Jforce.Assignment2.dto.CartItemRequest;
+import com.Jforce.Assignment2.dto.CartItemResponse;
+import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 
 @RestController
+@Validated
 @RequestMapping("/api/cart")
 public class CartController {
 
@@ -18,21 +24,21 @@ public class CartController {
     }
 
     @GetMapping("/{userId}")
-    public List<Cart_items> getCartItems(@PathVariable Long userId) {
-        return cartService.getCartItems(userId);
+    public List<CartItemResponse> getCartItems(@PathVariable Long userId) {
+        return cartService.getCartItems(userId).stream().map(CartItemResponse::from).toList();
     }
 
     @PostMapping("/{userId}/items")
-    public Cart_items addItem(@PathVariable Long userId,
-                              @RequestParam Long productId,
-                              @RequestParam int quantity) {
-        return cartService.addItemToCart(userId, productId, quantity);
+    public CartItemResponse addItem(@PathVariable Long userId,
+                                    @Valid @RequestBody CartItemRequest request) {
+        return CartItemResponse.from(
+                cartService.addItemToCart(userId, request.productId(), request.quantity()));
     }
 
     @PutMapping("/items/{itemId}")
-    public Cart_items updateItem(@PathVariable Long itemId,
-                                 @RequestParam int quantity) {
-        return cartService.updateItem(itemId, quantity);
+    public CartItemResponse updateItem(@PathVariable Long itemId,
+                                       @RequestParam @Positive int quantity) {
+        return CartItemResponse.from(cartService.updateItem(itemId, quantity));
     }
 
     @DeleteMapping("/items/{itemId}")
