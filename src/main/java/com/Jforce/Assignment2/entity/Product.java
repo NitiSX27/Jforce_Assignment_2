@@ -34,5 +34,7 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Categories category;
 
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
+    private Inventory inventory;
 
 }

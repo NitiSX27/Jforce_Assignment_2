@@ -8,6 +8,7 @@ public record ProductResponse(
         String description,
         double price,
         boolean enabled,
+        int inventoryQuantity,
         Long categoryId,
         String categoryName
 ) {
@@ -18,6 +19,7 @@ public record ProductResponse(
                 product.getDescription(),
                 product.getPrice(),
                 product.isEnabled(),
+                product.getInventory() == null ? 0 : product.getInventory().getQuantity(),
                 product.getCategory() == null ? null : product.getCategory().getId(),
                 product.getCategory() == null ? null : product.getCategory().getName()
         );

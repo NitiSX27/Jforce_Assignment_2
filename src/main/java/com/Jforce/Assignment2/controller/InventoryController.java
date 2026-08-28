@@ -1,6 +1,7 @@
 package com.Jforce.Assignment2.controller;
 
 import com.Jforce.Assignment2.entity.Inventory;
+import com.Jforce.Assignment2.dto.InventoryRequest;
 import com.Jforce.Assignment2.service.InventoryService;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
@@ -19,8 +20,8 @@ public class InventoryController {
     }
 
     @PostMapping
-    public Inventory addInventory(@Valid @RequestBody Inventory inventory) {
-        return inventoryService.addInventory(inventory);
+    public Inventory addInventory(@Valid @RequestBody InventoryRequest request) {
+        return inventoryService.addInventory(request.productId(), request.quantity());
     }
 
     @GetMapping("/product/{productId}")

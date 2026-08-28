@@ -28,6 +28,18 @@ public class InventoryService {
         return inventoryRepository.save(inventory);
     }
 
+    public Inventory addInventory(Long productId, int quantity) {
+        if (quantity < 0) {
+            throw new BusinessException("Quantity cannot be negative");
+        }
+
+        Inventory inventory = new Inventory();
+        inventory.setProduct(productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found: " + productId)));
+        inventory.setQuantity(quantity);
+        return inventoryRepository.save(inventory);
+    }
+
     public Inventory getInventoryByProduct(Long productId){
         return inventoryRepository.findByProduct_Id(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Inventory not found for product: " + productId));

@@ -5,6 +5,7 @@ import com.Jforce.Assignment2.entity.User;
 import com.Jforce.Assignment2.repository.RolesRepository;
 import com.Jforce.Assignment2.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.Jforce.Assignment2.exception.ResourceNotFoundException;
 
 import java.util.List;
@@ -14,10 +15,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RolesRepository rolesRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, RolesRepository rolesRepository) {
+    public UserService(UserRepository userRepository, RolesRepository rolesRepository,
+                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.rolesRepository = rolesRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User addUser(User user, Long roleId) {
@@ -25,6 +29,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + roleId));
 
         user.setRole(role);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -46,7 +51,7 @@ public class UserService {
         User existingUser = getUserById(id);
         existingUser.setName(user.getName());
         existingUser.setEmail(user.getEmail());
-        existingUser.setPassword(user.getPassword());
+        existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(existingUser);
     }
 
@@ -55,6 +60,14 @@ public class UserService {
         Roles role = rolesRepository.findById(roleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + roleId));
 
+        user.setRole(role);
+        return userRepository.save(user);
+    }
+
+    public User updateUserRole(Long userId, String roleName) {
+        User user = getUserById(userId);
+        Roles role = rolesRepository.findByName(roleName)
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + roleName));
         user.setRole(role);
         return userRepository.save(user);
     }

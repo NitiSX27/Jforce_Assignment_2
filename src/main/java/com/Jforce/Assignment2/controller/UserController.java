@@ -32,6 +32,11 @@ public class UserController {
         return userService.updateUserRole(userId, roleId);
     }
 
+    @PutMapping("/{userId}/role")
+    public User updateUserRole(@PathVariable Long userId, @RequestParam String name) {
+        return userService.updateUserRole(userId, name);
+    }
+
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
